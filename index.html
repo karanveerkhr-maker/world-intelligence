@@ -728,6 +728,12 @@ const LAYER_RISKS = { conflict:['conflict','high'], defense:['conflict','high'],
 
 (function initGlobe(){
   const el = document.getElementById('globeViz');
+  if (typeof Globe === 'undefined' || typeof THREE === 'undefined') {
+    const status = document.getElementById('globeStatus');
+    status.style.display = 'flex';
+    status.innerHTML = '3D globe library failed to load — this preview environment is likely blocking outbound requests to unpkg.com. Open this file directly in a real browser tab, or on its deployed URL, to see the live globe.';
+    return;
+  }
   const capColor = (layer) => (feat)=>{
     const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name);
     if(!c) return 'rgba(120,130,160,0.22)';
