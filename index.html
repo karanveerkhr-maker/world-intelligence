@@ -334,18 +334,17 @@ main{max-width:1500px; margin:0 auto; padding:22px 26px 60px;}
     <div class="card">
       <div class="card-head"><div><div class="card-title">Weather</div><div class="card-sub">Global overview</div></div><span class="live-tag">live</span></div>
       <div id="weatherWidget"></div>
-      <div class="open-link" onclick="showView('dashboard')">Open Weather Dashboard →</div>
     </div>
   </div>
 
   <!-- BOTTOM ROW -->
   <div class="bottom-row">
     <div class="card">
-      <div class="card-head"><div class="card-title">Today's Global Timeline</div><div class="card-link">View Full Timeline</div></div>
+      <div class="card-head"><div class="card-title">Today's Global Timeline</div></div>
       <div class="timeline-track" id="timelineTrack"></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Top Movers (24h)</div><div class="card-link">View All</div></div>
+      <div class="card-head"><div class="card-title">Top Movers (24h)</div><div class="card-link" onclick="showView('markets')">View All</div></div>
       <div id="moversWidget"></div>
     </div>
     <div class="card">
@@ -711,6 +710,7 @@ function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
   document.querySelectorAll('#navBar button').forEach(b=>b.classList.toggle('active', b.dataset.view===id));
+  window.scrollTo({top:0, behavior:'auto'});
 }
 document.querySelectorAll('#navBar button').forEach(b=> b.onclick = ()=> showView(b.dataset.view));
 document.getElementById('searchInput').addEventListener('input', (e)=>{ showView('countries'); renderGrid(e.target.value); });
