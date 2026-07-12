@@ -742,20 +742,33 @@ const LAYER_RISKS = { conflict:['conflict','high'], defense:['conflict','high'],
     return (allowed && allowed.includes(c.risk)) ? RISK_HEX[c.risk] : 'rgba(120,130,160,0.15)';
   };
 
+  let ALL_STATS = {}; // keyed by ccn3 id -> {name, capital, population, region, flag}
+  let hoverFeat = null;
+
   const world = Globe()(el)
     .backgroundColor('rgba(0,0,0,0)')
     .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
     .showAtmosphere(true).atmosphereColor('#4f8cf6').atmosphereAltitude(0.2)
-    .polygonAltitude(0.012)
+    .polygonAltitude(d => d === hoverFeat ? 0.06 : 0.012)
     .polygonCapColor(capColor('all'))
     .polygonSideColor(()=> 'rgba(0,0,0,0.2)')
-    .polygonStrokeColor(()=> 'rgba(255,255,255,0.25)')
+    .polygonStrokeColor(d => d === hoverFeat ? '#ffffff' : 'rgba(255,255,255,0.25)')
     .polygonLabel(feat=>{
+      const s = ALL_STATS[feat.id];
       const name = ID_TO_NAME[feat.id];
-      return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#e9ebf3;">${name || 'No dashboard data yet'}</div>`;
+      const c = name && COUNTRIES.find(x=>x.name===name);
+      if(!s) return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#8991ab;">Data not available</div>`;
+      const riskBadge = c ? `<div style="margin-top:5px; font-size:10px; font-weight:700; letter-spacing:.03em; color:${RISK_HEX[c.risk]};">● ${RISK_LABEL[c.risk].toUpperCase()}</div>` : '';
+      return `<div style="background:#111626; border:1px solid rgba(255,255,255,.15); padding:9px 12px; border-radius:10px; font-family:Inter,sans-serif; min-width:150px;">
+        <div style="font-size:13px; font-weight:700; color:#e9ebf3;">${s.flag||''} ${s.name}</div>
+        <div style="font-size:11px; color:#8991ab; margin-top:3px;">Capital: ${s.capital||'—'}</div>
+        <div style="font-size:11px; color:#8991ab;">Pop: ${s.population? s.population.toLocaleString() : '—'}</div>
+        <div style="font-size:11px; color:#8991ab;">${s.region||''}</div>
+        ${riskBadge}
+      </div>`;
     })
     .onPolygonClick(feat=>{ const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name); if(c) openCountry(c); })
-    .onPolygonHover(hoverD=>{ el.style.cursor = hoverD && ID_TO_NAME[hoverD.id] ? 'pointer' : 'grab'; })
+    .onPolygonHover(feat=>{ hoverFeat = feat; el.style.cursor = feat && ID_TO_NAME[feat.id] ? 'pointer' : 'grab'; world.polygonAltitude(d => d===feat?0.06:0.012).polygonStrokeColor(d=> d===feat?'#ffffff':'rgba(255,255,255,0.25)'); })
     .width(440).height(440);
 
   world.controls().autoRotate = true;
@@ -769,6 +782,17 @@ const LAYER_RISKS = { conflict:['conflict','high'], defense:['conflict','high'],
       document.getElementById('globeStatus').style.display='none';
     })
     .catch(()=>{ document.getElementById('globeStatus').innerHTML = 'World map data unavailable right now — check your connection.'; });
+
+  // bulk-fetch every country's basic stats once, so hover works globally (not just our curated 17)
+  fetch('https://restcountries.com/v3.1/all?fields=name,ccn3,capital,population,region,flag')
+    .then(r=>r.json())
+    .then(list=>{
+      list.forEach(d=>{
+        if(!d.ccn3) return;
+        ALL_STATS[d.ccn3] = { name: d.name?.common || '', capital: d.capital? d.capital[0] : '', population: d.population, region: d.region || '', flag: d.flag || '' };
+      });
+    })
+    .catch(()=>{ /* hover will just show "Data not available" if this fails */ });
 
   document.getElementById('zoomIn').onclick = ()=>{ const p=world.pointOfView(); world.pointOfView({...p, altitude:Math.max(1.1,p.altitude-0.35)}, 350); };
   document.getElementById('zoomOut').onclick = ()=>{ const p=world.pointOfView(); world.pointOfView({...p, altitude:Math.min(3.2,p.altitude+0.35)}, 350); };
