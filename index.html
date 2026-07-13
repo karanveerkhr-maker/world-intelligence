@@ -453,10 +453,8 @@ function loadScriptWithRetry(src, onload, onerror, retriesLeft){
   s.onerror = ()=>{ if(retriesLeft > 0) setTimeout(()=>loadScriptWithRetry(src, onload, onerror, retriesLeft-1), 800); else onerror(); };
   document.head.appendChild(s);
 }
-let scriptsReady = 0; let scriptsFailed = false;
-function onLibLoaded(){ scriptsReady++; if(scriptsReady===2 && !scriptsFailed) window.dispatchEvent(new Event('globelibsready')); }
-function onLibFailed(){ scriptsFailed = true; window.dispatchEvent(new Event('globelibsfailed')); }
-loadScriptWithRetry('https://unpkg.com/three', onLibLoaded, onLibFailed, 2);
+function onLibLoaded(){ window.dispatchEvent(new Event('globelibsready')); }
+function onLibFailed(){ window.dispatchEvent(new Event('globelibsfailed')); }
 loadScriptWithRetry('https://unpkg.com/globe.gl', onLibLoaded, onLibFailed, 2);
 </script>
 <script>
@@ -935,14 +933,14 @@ const CONFLICT_ZONES = [
 
 function initGlobe(){
   const el = document.getElementById('globeViz');
-  if (typeof Globe === 'undefined' || typeof THREE === 'undefined') {
+  if (typeof Globe === 'undefined') {
     const status = document.getElementById('globeStatus');
     status.style.display = 'flex';
     status.innerHTML = 'The 3D globe library couldn\'t load from unpkg.com after retrying, possibly blocked by an ad-blocker, browser extension, or network filter. Try disabling extensions, a hard refresh (Ctrl+Shift+R), or a different network.<br><br><span id="globeRetryBtn" style="color:var(--blue); cursor:pointer; text-decoration:underline;">Try again</span>';
     document.getElementById('globeRetryBtn').onclick = ()=> window.location.reload();
     return;
   }
-  let ALL_STATS = {}; let hoverFeat = null; let nightMode = false; let bordersMode = false; let disastersMode = false;
+  let ALL_STATS = {}; let hoverFeat = null; let nightMode = false; let bordersMode = false; let disastersMode = false; let statsLoaded = false;
 
   const capColor = (layer) => (feat)=>{
     const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name);
@@ -962,7 +960,13 @@ function initGlobe(){
     .polygonStrokeColor(d => bordersMode ? '#ffffff' : (d === hoverFeat ? '#ffffff' : 'rgba(255,255,255,0.25)'))
     .polygonLabel(feat=>{
       const s = ALL_STATS[feat.id]; const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name);
-      if(!s) return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#8991ab;">Data not available</div>`;
+      if(!s){
+        if(c) return `<div style="background:#111626; border:1px solid rgba(255,255,255,.15); padding:9px 12px; border-radius:10px; font-family:Inter,sans-serif; min-width:130px;">
+          <div style="font-size:13px; font-weight:700; color:#e9ebf3;">${c.name}</div>
+          <div style="margin-top:5px; font-size:10px; font-weight:700; letter-spacing:.03em; color:${RISK_HEX[c.risk]};">● ${RISK_LABEL[c.risk].toUpperCase()}</div>
+          <div style="font-size:10px; color:#565d75; margin-top:4px;">(full details unavailable right now)</div></div>`;
+        return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#8991ab;">${statsLoaded ? 'Data not available' : 'Loading country details…'}</div>`;
+      }
       const riskBadge = c ? `<div style="margin-top:5px; font-size:10px; font-weight:700; letter-spacing:.03em; color:${RISK_HEX[c.risk]};">● ${RISK_LABEL[c.risk].toUpperCase()}</div>` : '';
       return `<div style="background:#111626; border:1px solid rgba(255,255,255,.15); padding:9px 12px; border-radius:10px; font-family:Inter,sans-serif; min-width:150px;">
         <div style="font-size:13px; font-weight:700; color:#e9ebf3;">${s.flag||''} ${s.name}</div>
@@ -993,9 +997,10 @@ function initGlobe(){
     document.getElementById('globeStatus').style.display='none';
   }).catch(()=>{ document.getElementById('globeStatus').innerHTML = 'World map data unavailable right now — check your connection.'; });
 
-  fetch('https://restcountries.com/v3.1/all?fields=name,ccn3,capital,population,region,flag').then(r=>r.json()).then(list=>{
+  fetchJsonWithRetry('https://restcountries.com/v3.1/all?fields=name,ccn3,capital,population,region,flag', 2, 1500).then(list=>{
     list.forEach(d=>{ if(!d.ccn3) return; ALL_STATS[d.ccn3] = { name: d.name?.common||'', capital: d.capital?d.capital[0]:'', population: d.population, region: d.region||'', flag: d.flag||'' }; });
-  }).catch(()=>{});
+    statsLoaded = true;
+  }).catch(()=>{ statsLoaded = true; });
 
   document.getElementById('zoomIn').onclick = ()=>{ const p=world.pointOfView(); world.pointOfView({...p, altitude:Math.max(1.1,p.altitude-0.35)}, 350); };
   document.getElementById('zoomOut').onclick = ()=>{ const p=world.pointOfView(); world.pointOfView({...p, altitude:Math.min(3.2,p.altitude+0.35)}, 350); };
@@ -1014,7 +1019,7 @@ function initGlobe(){
   });
 }
 
-if (typeof Globe !== 'undefined' && typeof THREE !== 'undefined') { initGlobe(); }
+if (typeof Globe !== 'undefined') { initGlobe(); }
 else { window.addEventListener('globelibsready', initGlobe); window.addEventListener('globelibsfailed', initGlobe); }
 
 /* ===================== Init ===================== */
