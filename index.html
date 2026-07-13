@@ -225,6 +225,11 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
         <div class="clock-mini"><div class="t" id="topClock">--:--:--</div><div class="d" id="topDate">--</div></div>
         <div class="hicon">🔔<span class="badge">12</span></div>
         <div class="hicon">⚙️</div>
+        <select id="currencySelect" style="background:var(--panel); border:1px solid var(--border); color:var(--text); font-size:12px; padding:7px 8px; border-radius:9px; cursor:pointer;">
+          <option value="USD">$ USD</option>
+          <option value="INR">₹ INR</option>
+          <option value="AED">د.إ AED</option>
+        </select>
         <div class="hprofile"><div class="av">A</div></div>
         <div class="premium-badge">✦ PREMIUM</div>
       </div>
@@ -439,21 +444,33 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
 
 <div class="overlay" id="overlay"><div class="modal" id="modalContent"></div></div>
 
-<script src="https://unpkg.com/three"></script>
-<script src="https://unpkg.com/globe.gl"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script>
+function loadScriptWithRetry(src, onload, onerror, retriesLeft){
+  const s = document.createElement('script');
+  s.src = src + (retriesLeft < 2 ? ('?retry=' + Date.now()) : '');
+  s.onload = onload;
+  s.onerror = ()=>{ if(retriesLeft > 0) setTimeout(()=>loadScriptWithRetry(src, onload, onerror, retriesLeft-1), 800); else onerror(); };
+  document.head.appendChild(s);
+}
+let scriptsReady = 0; let scriptsFailed = false;
+function onLibLoaded(){ scriptsReady++; if(scriptsReady===2 && !scriptsFailed) window.dispatchEvent(new Event('globelibsready')); }
+function onLibFailed(){ scriptsFailed = true; window.dispatchEvent(new Event('globelibsfailed')); }
+loadScriptWithRetry('https://unpkg.com/three', onLibLoaded, onLibFailed, 2);
+loadScriptWithRetry('https://unpkg.com/globe.gl', onLibLoaded, onLibFailed, 2);
+</script>
 <script>
 /* ===================== DATA ===================== */
 const ALERTS = [
- {cat:'RUSSIA-UKRAINE WAR', icon:'🔥', bg:'var(--red-dim)', badge:'high', desc:'Military activity increased in Donetsk region', time:'2m ago'},
- {cat:'GLOBAL ECONOMY', icon:'📉', bg:'var(--orange-dim)', badge:'medium', desc:'IMF lowers global growth forecast for the year', time:'45m ago'},
- {cat:'EXTREME WEATHER', icon:'🌀', bg:'var(--purple-dim)', badge:'high', desc:'Tropical cyclone forms in the Arabian Sea', time:'1h ago'},
- {cat:'OIL PRICE SURGE', icon:'🛢️', bg:'var(--red-dim)', badge:'high', desc:'Brent crude rises above $82 amid supply concerns', time:'2h ago'},
- {cat:'CYBER ACTIVITY', icon:'🛰️', bg:'var(--orange-dim)', badge:'medium', desc:'Coordinated attacks reported against regional banking infrastructure', time:'3h ago'},
- {cat:'DIPLOMATIC MEETING', icon:'🤝', bg:'var(--green-dim)', badge:'low', desc:'Trade delegation talks scheduled between two regional blocs', time:'5h ago'},
+ {cat:'RUSSIA-UKRAINE WAR', icon:'🔥', bg:'var(--red-dim)', badge:'high', desc:'Military activity increased in Donetsk region', time:'2m ago', action:()=>{ const c=COUNTRIES.find(x=>x.name==='Ukraine'); if(c) openCountry(c); }},
+ {cat:'GLOBAL ECONOMY', icon:'📉', bg:'var(--orange-dim)', badge:'medium', desc:'IMF lowers global growth forecast for the year', time:'45m ago', action:()=>showView('economy')},
+ {cat:'EXTREME WEATHER', icon:'🌀', bg:'var(--purple-dim)', badge:'high', desc:'Tropical cyclone forms in the Arabian Sea', time:'1h ago', action:()=>showView('disasters')},
+ {cat:'OIL PRICE SURGE', icon:'🛢️', bg:'var(--red-dim)', badge:'high', desc:'Brent crude rises above $82 amid supply concerns', time:'2h ago', action:()=>showView('markets')},
+ {cat:'CYBER ACTIVITY', icon:'🛰️', bg:'var(--orange-dim)', badge:'medium', desc:'Coordinated attacks reported against regional banking infrastructure', time:'3h ago', action:()=>showView('alerts')},
+ {cat:'DIPLOMATIC MEETING', icon:'🤝', bg:'var(--green-dim)', badge:'low', desc:'Trade delegation talks scheduled between two regional blocs', time:'5h ago', action:()=>showView('ai')},
 ];
-function alertRow(a){
-  return `<div class="alert-item"><div class="alert-ic" style="background:${a.bg}">${a.icon}</div>
+function alertRow(a, idx){
+  return `<div class="alert-item" style="cursor:pointer;" onclick="ALERTS[${idx}].action()"><div class="alert-ic" style="background:${a.bg}">${a.icon}</div>
     <div><div style="display:flex; align-items:center; gap:8px;"><span class="alert-cat">${a.cat}</span><span class="badge ${a.badge}">${a.badge.toUpperCase()}</span></div>
     <div class="alert-desc">${a.desc}</div><div class="alert-time">${a.time}</div></div></div>`;
 }
@@ -466,13 +483,76 @@ function rowsHTML(arr){ return arr.map(([n,v,c,up])=> `<div class="wstat-row"><s
 document.getElementById('mt-indices').innerHTML = rowsHTML(INDICES);
 document.getElementById('mt-bonds').innerHTML = rowsHTML(BONDS);
 
-const COMMOD = [['Gold','$2,344.10','+0.85%',true],['Silver','$29.41','+1.20%',true],['Oil (Brent)','$82.19','+2.31%',true],['Natural Gas','$2.78','-0.65%',false],['Copper','$4.27','+0.18%',true]];
-document.getElementById('commodWidget').innerHTML = rowsHTML(COMMOD);
-document.getElementById('mt-commodities').innerHTML = rowsHTML(COMMOD);
+const CCY_SYMBOL = {USD:'$', INR:'₹', AED:'د.إ '};
+let CCY_RATES = {USD:1, INR:83.3, AED:3.67};
+let currentCurrency = 'USD';
+let STAT_CACHE = {mcap:null, gdp:null};
+function fmtCcy(usdVal){
+  const converted = usdVal * (CCY_RATES[currentCurrency]||1);
+  return CCY_SYMBOL[currentCurrency] + converted.toLocaleString(undefined,{maximumFractionDigits: converted>100?0:2});
+}
+fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json()).then(d=>{
+  if(d && d.rates){ CCY_RATES.INR = d.rates.INR || CCY_RATES.INR; CCY_RATES.AED = d.rates.AED || CCY_RATES.AED; }
+}).catch(()=>{});
+document.getElementById('currencySelect').onchange = (e)=>{
+  currentCurrency = e.target.value;
+  renderCommod(); renderCrypto();
+  if(STAT_CACHE.mcap!=null) document.getElementById('mcapStat').textContent = fmtCcy(STAT_CACHE.mcap/1e12) + 'T';
+  if(STAT_CACHE.gdp!=null) document.getElementById('gdpStat').textContent = fmtCcy(STAT_CACHE.gdp/1e12) + 'T';
+};
 
-const CONFLICTS = [['Russia vs Ukraine','high'],['Israel vs Hamas','high'],['India vs Pakistan','medium'],['North Korea Tensions','medium'],['Nigeria Armed Conflict','low']];
-function renderConflicts(id){ document.getElementById(id).innerHTML = CONFLICTS.map(([n,b])=> `<div class="wstat-row"><span class="wstat-name">${n}</span><span class="badge ${b}">${b.toUpperCase()}</span></div>`).join(''); }
+const COMMOD = [['Gold',2344.10,'+0.85%',true],['Silver',29.41,'+1.20%',true],['Oil (Brent)',82.19,'+2.31%',true],['Natural Gas',2.78,'-0.65%',false],['Copper',4.27,'+0.18%',true]];
+function renderCommod(){
+  const html = COMMOD.map(([n,v,c,up])=> `<div class="wstat-row"><span class="wstat-name">${n}</span><span class="wstat-val">${fmtCcy(v)} <span class="${up?'up':'down'}">${up?'▲':'▼'}${String(c).replace(/[+-]/,'')}</span></span></div>`).join('');
+  document.getElementById('commodWidget').innerHTML = html;
+  document.getElementById('mt-commodities').innerHTML = html;
+}
+renderCommod();
+
+const CONFLICTS = [
+ {name:'Russia vs Ukraine', badge:'high', countries:['Russia','Ukraine'], zone:{lat:48.0,lng:37.8},
+  summary:'Full-scale war since February 2022, when Russia launched a large-scale invasion of Ukraine. Fighting is concentrated in the eastern Donbas region (Donetsk and Luhansk) and along the southern front. The conflict has triggered sweeping Western sanctions on Russia, major military and financial aid to Ukraine from NATO members, and significant disruption to global energy and grain markets.'},
+ {name:'Israel vs Hamas', badge:'high', countries:['Israel'], zone:{lat:31.5,lng:34.8},
+  summary:'Ongoing conflict centered on Gaza following the October 2023 Hamas attack on Israel and Israel\'s subsequent military campaign. The conflict has drawn in regional actors, disrupted Red Sea shipping routes via Houthi attacks, and remains a central driver of Middle East diplomatic tension.'},
+ {name:'India vs Pakistan', badge:'medium', countries:['India','Pakistan'], zone:{lat:34.0,lng:74.0},
+  summary:'Long-running tension centered on the disputed Kashmir region, punctuated by periodic border skirmishes and diplomatic crises. Both nations are nuclear-armed, which keeps the situation a persistent, closely-watched regional risk even during quieter periods.'},
+ {name:'North Korea Tensions', badge:'medium', countries:[], zone:{lat:39.0,lng:127.5},
+  summary:'Recurring tension driven by North Korea\'s missile and nuclear weapons programme, and its impact on relations with South Korea, Japan, and the United States. Sanctions regimes and periodic weapons tests are the main flashpoints, without active large-scale conflict.'},
+ {name:'Nigeria Armed Conflict', badge:'low', countries:['Nigeria'], zone:{lat:9.0,lng:8.0},
+  summary:'Ongoing insurgency in northeastern Nigeria led by Boko Haram and ISWAP factions, alongside separate farmer-herder and banditry violence in central Nigeria. The conflict has driven significant internal displacement and remains a persistent security and humanitarian concern.'},
+];
+function renderConflicts(id){
+  document.getElementById(id).innerHTML = CONFLICTS.map((c,idx)=> `<div class="wstat-row" style="cursor:pointer;" onclick="openConflict(${idx})"><span class="wstat-name">${c.name}</span><span class="badge ${c.badge}">${c.badge.toUpperCase()}</span></div>`).join('');
+}
 renderConflicts('conflictWidget2');
+
+async function openConflict(idx){
+  const c = CONFLICTS[idx];
+  const overlay=document.getElementById('overlay'); const modal=document.getElementById('modalContent');
+  overlay.classList.add('show');
+  const countryChips = c.countries.length
+    ? c.countries.map(n=>`<span class="chip" onclick="closeModal(); setTimeout(()=>{const cc=COUNTRIES.find(x=>x.name==='${n}'); if(cc) openCountry(cc);},150)">${n} →</span>`).join(' ')
+    : '<span style="color:var(--dimmer); font-size:12.5px;">No linked country dashboard yet</span>';
+  modal.innerHTML = `
+    <div class="modal-head"><h2>⚔️ ${c.name}</h2><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="legend-item" style="margin-bottom:16px;"><span class="badge ${c.badge}">${c.badge.toUpperCase()}</span></div>
+    <div class="section-lbl" style="margin-top:0;">Background</div>
+    <div class="summary-txt">${c.summary}</div>
+    <div class="section-lbl">Involved Countries</div>
+    <div class="ask-row" style="margin-top:0;">${countryChips}</div>
+    <div class="section-lbl">Latest News <span class="live-tag" style="margin-left:6px;">live · GDELT</span></div>
+    <div id="conflictNews"><div class="wstat-row"><span class="wstat-name">Fetching live headlines<span class="loading-dots"></span></span></div></div>
+    <div class="section-lbl">Ask about this conflict</div>
+    <div class="ask-box">
+      <textarea id="askInput" placeholder="e.g. What triggered this? What's the current state of negotiations?"></textarea>
+      <div class="ask-row">
+        <span class="chip" onclick="quickAsk('What triggered the ${c.name} conflict and what is its current status?')">Current status</span>
+        <button class="ask-submit" onclick="submitAsk('${c.name.replace(/'/g,"\\'")}', '${c.summary.replace(/'/g,"\\'")}')">Ask →</button>
+      </div>
+      <div id="askAnswer" class="ask-answer"></div>
+    </div>`;
+  loadCountryNews(c.name, 'conflictNews');
+}
 
 document.getElementById('econCalendar').innerHTML = [
  ['🇺🇸 USD','Fed Chair Speaks','16:00'],['🇪🇺 EUR','EU Economic Forecast','17:00'],['🇬🇧 GBP','UK Inflation Report','18:30'],['🇯🇵 JPY','BoJ Policy Statement','22:00']
@@ -546,9 +626,14 @@ function renderGrid(filterText){
 renderGrid();
 
 /* ===================== World Bank helper ===================== */
+async function fetchJsonWithRetry(url, retries=2, delay=1200){
+  for(let i=0; i<=retries; i++){
+    try{ const res = await fetch(url); if(!res.ok) throw new Error('bad status'); return await res.json(); }
+    catch(e){ if(i===retries) throw e; await new Promise(r=>setTimeout(r,delay)); }
+  }
+}
 async function fetchWBIndicator(countryCode, indicator){
-  const res = await fetch(`https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json&mrnev=1&per_page=1`);
-  const data = await res.json();
+  const data = await fetchJsonWithRetry(`https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json&mrnev=1&per_page=1`);
   const entry = data && data[1] && data[1][0];
   return (entry && entry.value != null) ? {value:entry.value, year:entry.date} : null;
 }
@@ -612,7 +697,7 @@ async function submitAsk(countryName, summary){
         `You are the AI analyst inside a country intelligence dashboard. The user is viewing ${countryName}. Context: "${summary}" Answer concisely (under 150 words), neutral tone, flag uncertainty. Question: ${q}`}]})});
     const data = await resp.json();
     answerBox.textContent = (data.content||[]).map(b=>b.text||'').join('\n').trim() || 'No response returned.';
-  }catch(e){ answerBox.textContent = 'Could not reach the AI assistant right now.'; }
+  }catch(e){ answerBox.textContent = 'AI assistant unavailable — this needs the Vercel-hosted version (with the API proxy), not plain GitHub Pages. See GITHUB.md for setup.'; }
 }
 function quickGlobalAsk(q){ document.getElementById('globalAskInput').value=q; }
 async function submitGlobalAsk(){
@@ -625,7 +710,7 @@ async function submitGlobalAsk(){
         `You are the AI assistant inside a world-intelligence dashboard. Answer concisely (under 180 words), neutral tone, flag uncertainty. Question: ${q}`}]})});
     const data = await resp.json();
     box.textContent = (data.content||[]).map(b=>b.text||'').join('\n').trim() || 'No response returned.';
-  }catch(e){ box.textContent = 'Could not reach the AI assistant right now.'; }
+  }catch(e){ box.textContent = 'AI assistant unavailable — this needs the Vercel-hosted version (with the API proxy), not plain GitHub Pages. See GITHUB.md for setup.'; }
 }
 
 /* ===================== GDELT news ===================== */
@@ -667,19 +752,24 @@ async function loadWorldNews(){
 }
 
 /* ===================== Crypto (live, with market cap) ===================== */
+let CRYPTO_CACHE = [];
+function renderCrypto(){
+  if(!CRYPTO_CACHE.length) return;
+  const html = CRYPTO_CACHE.map(coin=>{
+    const chg = coin.price_change_percentage_24h || 0;
+    return `<div class="wstat-row"><span class="wstat-name">${coin.name} <span style="color:var(--dimmer)">${coin.symbol.toUpperCase()}</span></span>
+      <span class="wstat-val">${fmtCcy(coin.current_price)}
+      <span class="${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</span>
+      <span style="color:var(--dimmer); font-size:10.5px;">${fmtCcy(coin.market_cap/1e9)}B</span></span></div>`;
+  }).join('');
+  document.getElementById('cryptoTable').innerHTML = html;
+  document.getElementById('cryptoTable2').innerHTML = html;
+}
 async function loadCryptoAll(){
   try{
     const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,ripple,dogecoin&order=market_cap_desc');
-    const list = await res.json();
-    const html = list.map(coin=>{
-      const chg = coin.price_change_percentage_24h || 0;
-      return `<div class="wstat-row"><span class="wstat-name">${coin.name} <span style="color:var(--dimmer)">${coin.symbol.toUpperCase()}</span></span>
-        <span class="wstat-val">$${coin.current_price.toLocaleString(undefined,{maximumFractionDigits:2})}
-        <span class="${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</span>
-        <span style="color:var(--dimmer); font-size:10.5px;">$${(coin.market_cap/1e9).toFixed(1)}B</span></span></div>`;
-    }).join('');
-    document.getElementById('cryptoTable').innerHTML = html;
-    document.getElementById('cryptoTable2').innerHTML = html;
+    CRYPTO_CACHE = await res.json();
+    renderCrypto();
   }catch(e){
     const msg = '<div class="wstat-row"><span class="wstat-name">Live crypto feed unavailable right now.</span></div>';
     document.getElementById('cryptoTable').innerHTML = msg; document.getElementById('cryptoTable2').innerHTML = msg;
@@ -737,23 +827,24 @@ async function loadQuakes(){
 async function loadStatStrip(){
   const strip = document.getElementById('statStrip');
   strip.innerHTML = [
-    ['🌎','8.09B','World Population (est.)', 'sample'],
-    ['🏳️','195','Countries', 'live'],
-    ['⚔️',String(CONFLICTS.filter(c=>c[1]==='high').length),'Active Conflicts (high)', 'live'],
-    ['🌪️','—','Natural Disasters (7d)', 'live', 'quakeStat'],
-    ['💰','—','Crypto Market Cap', 'live', 'mcapStat'],
-    ['📈','—','Global GDP', 'live', 'gdpStat'],
-    ['🌡️','36.8 Gt','CO₂ Emissions (est.)', 'sample'],
-  ].map(([ic,v,l,tag,id])=> `<div class="stat-cell"><div class="ic" style="background:${tag==='live'?'var(--green-dim)':'var(--panel-2)'}">${ic}</div>
+    ['🌎','8.09B','World Population (est.)', 'sample', null, null],
+    ['🏳️','195','Countries', 'live', null, 'countries'],
+    ['⚔️',String(CONFLICTS.filter(c=>c.badge==='high').length),'Active Conflicts (high)', 'live', null, 'defense'],
+    ['🌪️','—','Natural Disasters (7d)', 'live', 'quakeStat', 'disasters'],
+    ['💰','—','Crypto Market Cap', 'live', 'mcapStat', 'markets'],
+    ['📈','—','Global GDP', 'live', 'gdpStat', 'economy'],
+    ['🌡️','36.8 Gt','CO₂ Emissions (est.)', 'sample', null, null],
+  ].map(([ic,v,l,tag,id,view])=> `<div class="stat-cell" ${view?`onclick="showView('${view}')" style="cursor:pointer;"`:''}><div class="ic" style="background:${tag==='live'?'var(--green-dim)':'var(--panel-2)'}">${ic}</div>
     <div><div class="v" ${id?`id="${id}"`:''}>${v}</div><div class="l">${l}</div></div></div>`).join('');
 
-  fetch('https://api.coingecko.com/api/v3/global').then(r=>r.json()).then(d=>{
-    const mcap = d.data.total_market_cap.usd;
-    document.getElementById('mcapStat').textContent = '$' + (mcap/1e12).toFixed(2) + 'T';
+  fetchJsonWithRetry('https://api.coingecko.com/api/v3/global').then(d=>{
+    STAT_CACHE.mcap = d.data.total_market_cap.usd;
+    document.getElementById('mcapStat').textContent = fmtCcy(STAT_CACHE.mcap/1e12) + 'T';
   }).catch(()=>{ document.getElementById('mcapStat').textContent = 'n/a'; });
 
   fetchWBIndicator('WLD','NY.GDP.MKTP.CD').then(d=>{
-    document.getElementById('gdpStat').textContent = d ? '$'+(d.value/1e12).toFixed(1)+'T' : 'n/a';
+    STAT_CACHE.gdp = d ? d.value : null;
+    document.getElementById('gdpStat').textContent = d ? fmtCcy(d.value/1e12)+'T' : 'n/a';
   }).catch(()=>{ document.getElementById('gdpStat').textContent = 'n/a'; });
 }
 
@@ -842,12 +933,13 @@ const CONFLICT_ZONES = [
   {lat:23.7, lng:121.0, label:'Taiwan Strait tensions'},
 ];
 
-(function initGlobe(){
+function initGlobe(){
   const el = document.getElementById('globeViz');
   if (typeof Globe === 'undefined' || typeof THREE === 'undefined') {
     const status = document.getElementById('globeStatus');
     status.style.display = 'flex';
-    status.innerHTML = '3D globe library failed to load — this preview environment may be blocking outbound requests to unpkg.com. Open this file directly in a real browser tab, or on its deployed URL, to see the live globe.';
+    status.innerHTML = 'The 3D globe library couldn\'t load from unpkg.com after retrying, possibly blocked by an ad-blocker, browser extension, or network filter. Try disabling extensions, a hard refresh (Ctrl+Shift+R), or a different network.<br><br><span id="globeRetryBtn" style="color:var(--blue); cursor:pointer; text-decoration:underline;">Try again</span>';
+    document.getElementById('globeRetryBtn').onclick = ()=> window.location.reload();
     return;
   }
   let ALL_STATS = {}; let hoverFeat = null; let nightMode = false; let bordersMode = false; let disastersMode = false;
@@ -920,7 +1012,10 @@ const CONFLICT_ZONES = [
       world.pointsData(disastersMode ? QUAKE_POINTS : []);
     };
   });
-})();
+}
+
+if (typeof Globe !== 'undefined' && typeof THREE !== 'undefined') { initGlobe(); }
+else { window.addEventListener('globelibsready', initGlobe); window.addEventListener('globelibsfailed', initGlobe); }
 
 /* ===================== Init ===================== */
 document.getElementById('globeStats').innerHTML = [['🌎','195','Countries'],['🔥','12','Active Wars'],['⚠️','38','High Risk'],['📈','5','Market Alerts']]
