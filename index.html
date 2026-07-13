@@ -835,6 +835,13 @@ document.getElementById('marketTabs').querySelectorAll('button').forEach(btn=>{
 });
 
 /* ===================== Globe (globe.gl) ===================== */
+const CONFLICT_ZONES = [
+  {lat:48.0, lng:37.8, label:'Russia–Ukraine (Donetsk region)'},
+  {lat:31.5, lng:34.8, label:'Israel–Gaza'},
+  {lat:35.7, lng:51.4, label:'Iran (regional tensions)'},
+  {lat:23.7, lng:121.0, label:'Taiwan Strait tensions'},
+];
+
 (function initGlobe(){
   const el = document.getElementById('globeViz');
   if (typeof Globe === 'undefined' || typeof THREE === 'undefined') {
@@ -855,7 +862,7 @@ document.getElementById('marketTabs').querySelectorAll('button').forEach(btn=>{
 
   const world = Globe()(el)
     .backgroundColor('rgba(0,0,0,0)')
-    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
     .showAtmosphere(true).atmosphereColor('#4f8cf6').atmosphereAltitude(0.2)
     .polygonAltitude(d => d === hoverFeat ? 0.06 : 0.012)
     .polygonCapColor(capColor('all'))
@@ -877,6 +884,13 @@ document.getElementById('marketTabs').querySelectorAll('button').forEach(btn=>{
     .pointsData([])
     .pointLat('lat').pointLng('lng').pointColor(()=>'#f5a524').pointAltitude(0.02)
     .pointRadius(d=>Math.max(0.25, (d.mag||4)/12)).pointLabel(d=>`<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter;font-size:11px;color:#e9ebf3;">M${d.mag?.toFixed(1)} — ${d.place}</div>`)
+    .ringsData(CONFLICT_ZONES)
+    .ringLat('lat').ringLng('lng')
+    .ringColor(()=> t => `rgba(240,69,79,${1-t})`)
+    .ringMaxRadius(5).ringPropagationSpeed(2.2).ringRepeatPeriod(1400)
+    .labelsData(CONFLICT_ZONES)
+    .labelLat('lat').labelLng('lng').labelText('label')
+    .labelSize(1.1).labelColor(()=>'#f0454f').labelDotRadius(0.5).labelResolution(2).labelAltitude(0.015)
     .width(440).height(440);
 
   world.controls().autoRotate = true; world.controls().autoRotateSpeed = 0.12;
@@ -900,7 +914,7 @@ document.getElementById('marketTabs').querySelectorAll('button').forEach(btn=>{
       document.querySelectorAll('#layerTools .gtool').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
       const layer = btn.dataset.layer;
       nightMode = layer==='night'; bordersMode = layer==='borders'; disastersMode = layer==='disasters';
-      world.globeImageUrl(nightMode ? 'https://unpkg.com/three-globe/example/img/earth-night.jpg' : 'https://unpkg.com/three-globe/example/img/earth-dark.jpg');
+      world.globeImageUrl(nightMode ? 'https://unpkg.com/three-globe/example/img/earth-night.jpg' : 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
       world.polygonCapColor(capColor(layer==='conflict'?'conflict':'all'));
       world.polygonStrokeColor(d=> bordersMode ? '#ffffff' : 'rgba(255,255,255,0.25)');
       world.pointsData(disastersMode ? QUAKE_POINTS : []);
