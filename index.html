@@ -879,7 +879,7 @@ document.getElementById('marketTabs').querySelectorAll('button').forEach(btn=>{
     .pointRadius(d=>Math.max(0.25, (d.mag||4)/12)).pointLabel(d=>`<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter;font-size:11px;color:#e9ebf3;">M${d.mag?.toFixed(1)} — ${d.place}</div>`)
     .width(440).height(440);
 
-  world.controls().autoRotate = true; world.controls().autoRotateSpeed = 0.5;
+  world.controls().autoRotate = true; world.controls().autoRotateSpeed = 0.12;
   world.pointOfView({lat:22, lng:25, altitude:2.2});
 
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json()).then(topo=>{
