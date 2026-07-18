@@ -365,11 +365,17 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
           <div>
             <div class="cf-tabs" id="cfTabs">
               <button class="active" data-pane="overview">Overview</button>
+              <button data-pane="leaders">Leaders</button>
               <button data-pane="economy">Economy</button>
               <button data-pane="weather">Weather</button>
               <button data-pane="news">News</button>
             </div>
             <div class="cf-pane active" id="cf-overview"><div class="summary-txt" id="cfSummary">Select a country to see its overview.</div></div>
+            <div class="cf-pane" id="cf-leaders">
+              <div style="font-size:10.5px; color:var(--dimmer); margin-bottom:8px;">✨ AI-generated on request — not a verified live feed. Double-check current names for anything important.</div>
+              <div id="cfLeaders" class="summary-txt">Click below to look up current leadership.</div>
+              <button class="ai-ask-btn" style="margin-top:10px;" onclick="loadCountryLeaders()">✨ Look up leaders →</button>
+            </div>
             <div class="cf-pane" id="cf-economy"><div class="cf-stat-grid" id="cfEconGrid"></div></div>
             <div class="cf-pane" id="cf-weather"><div id="cfWeather">Loading…</div></div>
             <div class="cf-pane" id="cf-news"><div id="cfNews">Loading…</div></div>
@@ -765,16 +771,24 @@ async function loadCountryNews(name, elId){
   }
 }
 async function loadWorldNews(){
-  try{
-    const data = await fetchJsonWithRetry(`https://api.gdeltproject.org/api/v2/doc/doc?query=(world%20OR%20global%20OR%20international)%20sourcelang:english&mode=artlist&maxrecords=6&format=json&sort=hybridrel`, 2, 1200);
-    const articles = (data.articles || []).slice(0,6);
-    const html = articles.length ? newsRowsHTML(articles) : '<div class="wstat-row"><span class="wstat-name">No headlines found.</span></div>';
-    document.getElementById('worldNews').innerHTML = html;
-    document.getElementById('worldNews2').innerHTML = html;
-  }catch(e){
-    const msg = '<div class="wstat-row"><span class="wstat-name">Live news unavailable right now. <span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="loadWorldNews()">Retry</span></span></div>';
-    document.getElementById('worldNews').innerHTML = msg; document.getElementById('worldNews2').innerHTML = msg;
+  const queries = [
+    `https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:english&mode=artlist&maxrecords=8&format=json&sort=hybridrel&timespan=1d`,
+    `https://api.gdeltproject.org/api/v2/doc/doc?query=news%20sourcelang:english&mode=artlist&maxrecords=8&format=json&sort=datedesc`,
+  ];
+  for(const url of queries){
+    try{
+      const data = await fetchJsonWithRetry(url, 2, 1000);
+      const articles = (data.articles || []).slice(0,6);
+      if(articles.length){
+        const html = newsRowsHTML(articles);
+        document.getElementById('worldNews').innerHTML = html;
+        document.getElementById('worldNews2').innerHTML = html;
+        return;
+      }
+    }catch(e){ /* try next query */ }
   }
+  const msg = '<div class="wstat-row"><span class="wstat-name">Live news unavailable right now. <span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="loadWorldNews()">Retry</span></span></div>';
+  document.getElementById('worldNews').innerHTML = msg; document.getElementById('worldNews2').innerHTML = msg;
 }
 
 /* ===================== Crypto (live, with market cap) ===================== */
@@ -896,17 +910,20 @@ async function loadCountryFocus(name){
   document.getElementById('cfRegion').textContent = c.region; document.getElementById('cfCurrency').textContent = c.currency;
   document.getElementById('cfEconGrid').innerHTML = 'Loading…';
   document.getElementById('cfWeather').innerHTML = 'Loading…';
+  document.getElementById('cfLeaders').textContent = 'Click below to look up current leadership.';
   loadCountryNews(name, 'cfNews');
 
   let cca2=null, latlng=null;
   try{
-    const res = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(name)}?fields=capital,population,flag,cca2,capitalInfo`);
-    const data = await res.json(); const d = Array.isArray(data)?data[0]:data;
+    const data = await fetchJsonWithRetry(`https://restcountries.com/v3.1/name/${encodeURIComponent(name)}?fields=capital,population,flag,cca2,capitalInfo`, 2, 1000);
+    const d = Array.isArray(data)?data[0]:data;
     document.getElementById('cfFlag').textContent = d.flag || '🏳️';
     document.getElementById('cfCapital').textContent = d.capital ? d.capital[0] : '—';
     document.getElementById('cfPopulation').textContent = d.population ? d.population.toLocaleString() : '—';
     cca2 = d.cca2; latlng = d.capitalInfo && d.capitalInfo.latlng;
-  }catch(e){}
+  }catch(e){
+    document.getElementById('cfCapital').innerHTML = `— <span style="color:var(--blue); cursor:pointer; text-decoration:underline; font-size:11px;" onclick="loadCountryFocus('${name.replace(/'/g,"\\'")}')">Retry</span>`;
+  }
 
   if(cca2){
     try{
@@ -932,6 +949,19 @@ async function loadCountryFocus(name){
         <div style="font-size:10.5px; color:var(--dimmer); margin-top:3px;">live · Open-Meteo</div></div></div>`;
     }catch(e){ document.getElementById('cfWeather').innerHTML = 'Live weather unavailable right now.'; }
   } else { document.getElementById('cfWeather').innerHTML = 'No coordinates found for this capital.'; }
+}
+
+async function loadCountryLeaders(){
+  const name = document.getElementById('cfSelect').value;
+  const box = document.getElementById('cfLeaders');
+  box.innerHTML = `<span class="mono" style="color:var(--dimmer)">Looking up<span class="loading-dots"></span></span>`;
+  try{
+    const resp = await fetch("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({model:"claude-sonnet-4-6", max_tokens:400, messages:[{role:"user", content:
+        `List the current key political leaders of ${name}: head of state and/or head of government (e.g. President, Prime Minister), and the top elected official of the capital city if relevant. Format as a short bullet list: "Title — Name". If you are not confident a name is still current, say so explicitly rather than guessing.`}]})});
+    const data = await resp.json();
+    box.textContent = (data.content||[]).map(b=>b.text||'').join('\n').trim() || 'No response returned.';
+  }catch(e){ box.textContent = 'AI assistant unavailable — this needs the Vercel-hosted version (with the API proxy), not plain GitHub Pages. See GITHUB.md for setup.'; }
 }
 
 /* ===================== Nav / search / view switching ===================== */
