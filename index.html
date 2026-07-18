@@ -30,17 +30,17 @@ body{margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans
 @media (max-width:900px){ .shell{grid-template-columns:1fr;} .sidebar{display:none;} }
 
 /* ---------- Sidebar ---------- */
-.sidebar{background:var(--bg-2); border-right:1px solid var(--border); padding:16px 12px; position:sticky; top:0; height:100vh; overflow-y:auto;}
-.sb-logo{display:flex; align-items:center; gap:10px; padding:4px 8px 18px;}
-.sb-logo .mark{width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,var(--blue),var(--purple)); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0;}
-.sb-logo .t1{font-weight:700; font-size:12.5px; letter-spacing:.01em; line-height:1.2;}
-.sb-logo .t2{font-size:9.5px; color:var(--dimmer); letter-spacing:.05em;}
-.sb-group-label{font-size:10px; color:var(--dimmer); letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:14px 10px 6px;}
-.sb-item{display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--dim); margin-bottom:1px;}
+.sidebar{background:var(--bg-2); border-right:1px solid var(--border); padding:14px 10px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+.sb-logo{display:flex; align-items:center; gap:9px; padding:3px 6px 14px;}
+.sb-logo .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--blue),var(--purple)); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
+.sb-logo .t1{font-weight:700; font-size:12px; letter-spacing:.01em; line-height:1.2;}
+.sb-logo .t2{font-size:9px; color:var(--dimmer); letter-spacing:.05em;}
+.sb-group-label{font-size:9.5px; color:var(--dimmer); letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:11px 8px 5px;}
+.sb-item{display:flex; align-items:center; gap:9px; padding:6px 8px; border-radius:7px; cursor:pointer; font-size:12px; color:var(--dim); margin-bottom:1px;}
 .sb-item:hover{background:rgba(255,255,255,0.04); color:var(--text);}
 .sb-item.active{background:var(--blue-dim); color:var(--blue); font-weight:600;}
-.sb-item .ic{width:16px; text-align:center; flex-shrink:0;}
-.sb-item .nbadge{margin-left:auto; background:var(--red); color:#fff; font-size:9px; font-weight:700; border-radius:8px; padding:1px 6px;}
+.sb-item .ic{width:15px; text-align:center; flex-shrink:0;}
+.sb-item .nbadge{margin-left:auto; background:var(--red); color:#fff; font-size:8.5px; font-weight:700; border-radius:7px; padding:1px 5px;}
 
 /* ---------- Top bar ---------- */
 .topbar{display:flex; align-items:center; gap:16px; padding:12px 22px; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:60; background:rgba(8,10,18,0.9); backdrop-filter:blur(12px);}
@@ -62,84 +62,105 @@ body{margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans
 .stat-strip{display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border-bottom:1px solid var(--border);}
 @media (max-width:1100px){ .stat-strip{grid-template-columns:repeat(4,1fr);} }
 @media (max-width:640px){ .stat-strip{grid-template-columns:repeat(2,1fr);} }
-.stat-cell{background:var(--bg-2); padding:11px 16px; display:flex; align-items:center; gap:10px;}
-.stat-cell .ic{width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0;}
-.stat-cell .v{font-size:14.5px; font-weight:700; font-family:'JetBrains Mono'; line-height:1.1;}
-.stat-cell .l{font-size:9.5px; color:var(--dimmer); letter-spacing:.02em; margin-top:2px;}
+.stat-cell{background:var(--bg-2); padding:6px 10px; display:flex; align-items:center; gap:7px;}
+.stat-cell .ic{width:24px; height:24px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;}
+.stat-cell .v{font-size:12.5px; font-weight:700; font-family:'JetBrains Mono'; line-height:1.1;}
+.stat-cell .l{font-size:8.5px; color:var(--dimmer); letter-spacing:.02em; margin-top:1px;}
 
-main{max-width:1600px; margin:0 auto; padding:18px 22px 60px;}
+main{max-width:1600px; margin:0 auto; padding:14px 20px 50px;}
 .view{display:none;} .view.active{display:block; animation:fade .22s ease;}
-.page-title{font-size:20px; margin:0 0 4px; font-weight:700;}
-.page-sub{color:var(--dim); font-size:13px; margin:0 0 18px;}
+.page-title{font-size:17px; margin:0 0 3px; font-weight:700;}
+.page-sub{color:var(--dim); font-size:12px; margin:0 0 14px;}
 
-.card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px;}
-.card-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;}
-.card-title{font-weight:700; font-size:13px; letter-spacing:.01em; display:flex; align-items:center; gap:7px;}
-.card-sub{font-size:10.5px; color:var(--dimmer); margin-top:2px;}
-.card-link{font-size:11.5px; color:var(--dim); cursor:pointer;} .card-link:hover{color:var(--blue);}
-.live-tag{font-size:9px; color:var(--green); border:1px solid rgba(34,197,94,0.3); background:var(--green-dim); padding:1px 6px; border-radius:8px; font-weight:700;}
-.sample-tag{font-size:9px; color:var(--dimmer); border:1px solid var(--border); padding:1px 6px; border-radius:8px; font-weight:600;}
-.wstat-row{display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:12px;}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:11px; padding:10px;}
+.card-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;}
+.card-title{font-weight:700; font-size:12px; letter-spacing:.01em; display:flex; align-items:center; gap:6px;}
+.card-sub{font-size:9.5px; color:var(--dimmer); margin-top:1px;}
+.card-link{font-size:10.5px; color:var(--dim); cursor:pointer;} .card-link:hover{color:var(--blue);}
+.live-tag{font-size:8.5px; color:var(--green); border:1px solid rgba(34,197,94,0.3); background:var(--green-dim); padding:1px 5px; border-radius:7px; font-weight:700;}
+.sample-tag{font-size:8.5px; color:var(--dimmer); border:1px solid var(--border); padding:1px 5px; border-radius:7px; font-weight:600;}
+.wstat-row{display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border); font-size:11px;}
+#worldClockList, #cryptoTable, #cryptoTable2, #commodWidget, #mt-commodities, #econCalendar, #mt-indices, #mt-forex, #mt-bonds, #conflictWidget2 {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:0 14px;
+}
+#worldClockList .wstat-row, #cryptoTable .wstat-row, #cryptoTable2 .wstat-row, #commodWidget .wstat-row, #mt-commodities .wstat-row,
+#econCalendar .wstat-row, #mt-indices .wstat-row, #mt-forex .wstat-row, #mt-bonds .wstat-row, #conflictWidget2 .wstat-row {
+  border-bottom:none; border-top:1px solid var(--border); flex-wrap:wrap;
+}
+#worldClockList .wstat-row:nth-child(-n+2), #cryptoTable .wstat-row:nth-child(-n+2), #cryptoTable2 .wstat-row:nth-child(-n+2),
+#commodWidget .wstat-row:nth-child(-n+2), #mt-commodities .wstat-row:nth-child(-n+2), #econCalendar .wstat-row:nth-child(-n+2), #mt-indices .wstat-row:nth-child(-n+2),
+#mt-forex .wstat-row:nth-child(-n+2), #mt-bonds .wstat-row:nth-child(-n+2), #conflictWidget2 .wstat-row:nth-child(-n+2) {
+  border-top:none;
+}
+@media (max-width:640px){
+  #worldClockList, #cryptoTable, #cryptoTable2, #commodWidget, #mt-commodities, #econCalendar, #mt-indices, #mt-forex, #mt-bonds, #conflictWidget2 { grid-template-columns:1fr; }
+}
+.wsplit{display:grid; grid-template-columns:1fr 1fr; column-gap:14px;}
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:6px;}
+.mini-grid.cols3{grid-template-columns:repeat(3,1fr);}
+.mini-cell{background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:6px 9px;}
+.mini-cell .n{font-size:9.5px; color:var(--dim); display:flex; align-items:center; gap:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mini-cell .v{font-size:11.5px; font-weight:600; font-family:'JetBrains Mono'; margin-top:2px; display:flex; align-items:center; gap:4px;}
 .wstat-row:last-child{border-bottom:none;}
 .wstat-name{color:var(--dim); display:flex; align-items:center; gap:6px;}
-.wstat-val{font-family:'JetBrains Mono'; font-weight:600; font-size:12.5px; display:flex; align-items:center; gap:5px;}
+.wstat-val{font-family:'JetBrains Mono'; font-weight:600; font-size:11.5px; display:flex; align-items:center; gap:5px;}
 .up{color:var(--green);} .down{color:var(--red);}
-.badge{font-size:9px; font-weight:700; padding:2px 7px; border-radius:7px;}
+.badge{font-size:8.5px; font-weight:700; padding:2px 6px; border-radius:6px;}
 .badge.high{background:var(--red-dim); color:var(--red);} .badge.medium{background:var(--orange-dim); color:var(--orange);}
 .badge.low{background:var(--green-dim); color:var(--green);} .badge.watch{background:rgba(255,255,255,0.06); color:var(--dim);}
 
 /* Top grid */
-.top-grid{display:grid; grid-template-columns: 1.1fr 2.2fr 1.1fr; gap:14px; align-items:start;}
+.top-grid{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:9px; align-items:start;}
 @media (max-width:1180px){ .top-grid{grid-template-columns:1fr;} }
-.world-clock-row{display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
+.world-clock-row{display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border); font-size:11.5px;}
 .world-clock-row:last-child{border-bottom:none;}
-.wc-city{display:flex; align-items:center; gap:8px; color:var(--dim);}
+.wc-city{display:flex; align-items:center; gap:7px; color:var(--dim);}
 .wc-time{font-family:'JetBrains Mono'; font-weight:700;}
-.alert-item{display:flex; gap:11px; padding:10px 0; border-bottom:1px solid var(--border);}
+.alert-item{display:flex; gap:9px; padding:7px 0; border-bottom:1px solid var(--border);}
 .alert-item:last-child{border-bottom:none;}
-.alert-ic{width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;}
-.alert-cat{font-size:10.5px; font-weight:700;} .alert-desc{font-size:12px; color:#c6cadb; margin:3px 0 3px;}
-.alert-time{font-size:10.5px; color:var(--dimmer);}
+.alert-ic{width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;}
+.alert-cat{font-size:10px; font-weight:700;} .alert-desc{font-size:11px; color:#c6cadb; margin:2px 0 2px;}
+.alert-time{font-size:10px; color:var(--dimmer);}
 
-.globe-card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px;}
-.globe-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--dim); margin-bottom:10px;}
-.globe-legend span{display:flex; align-items:center; gap:6px;}
-.gdot{width:8px; height:8px; border-radius:50%;}
+.globe-card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px;}
+.globe-legend{display:flex; gap:11px; flex-wrap:wrap; font-size:10px; color:var(--dim); margin-bottom:8px;}
+.globe-legend span{display:flex; align-items:center; gap:5px;}
+.gdot{width:7px; height:7px; border-radius:50%;}
 .globe-stage{position:relative; display:flex; justify-content:center; padding:4px 0;}
-.globe-tools{position:absolute; left:6px; top:22px; display:flex; flex-direction:column; gap:7px; z-index:5;}
-.gtool{width:32px; height:32px; border-radius:9px; background:rgba(15,19,32,0.9); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--dim); transition:.15s;}
+.globe-tools{position:absolute; left:6px; top:20px; display:flex; flex-direction:column; gap:6px; z-index:5;}
+.gtool{width:28px; height:28px; border-radius:8px; background:rgba(15,19,32,0.9); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; color:var(--dim); transition:.15s;}
 .gtool.active{border-color:var(--blue); color:var(--blue); background:var(--blue-dim);}
 .gtool:hover{color:var(--text);}
-.globe-zoom{position:absolute; right:6px; top:22px; display:flex; flex-direction:column; gap:7px; z-index:5;}
-.globe{width:460px; height:460px; max-width:100%; border-radius:50%; position:relative; overflow:hidden;
+.globe-zoom{position:absolute; right:6px; top:20px; display:flex; flex-direction:column; gap:6px; z-index:5;}
+.globe{width:230px; height:230px; max-width:100%; border-radius:50%; position:relative; overflow:hidden;
   background: radial-gradient(circle at 32% 28%, #1c2a4d, #0a0f1e 68%);
   box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 0 60px rgba(79,140,246,0.18), inset 0 0 60px rgba(0,0,0,0.5);}
-.globe-stats{display:flex; justify-content:center; flex-wrap:wrap; gap:9px; margin-top:12px;}
-.gstat{display:flex; align-items:center; gap:6px; background:var(--panel-2); border:1px solid var(--border); border-radius:9px; padding:6px 11px; font-size:11.5px;}
+.globe-stats{display:flex; justify-content:center; flex-wrap:wrap; gap:7px; margin-top:10px;}
+.gstat{display:flex; align-items:center; gap:5px; background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:5px 9px; font-size:10.5px;}
 
 .ai-card{background:linear-gradient(180deg, rgba(139,124,246,0.08), transparent 40%), var(--panel); border:1px solid rgba(139,124,246,0.25);}
-.ai-badge{font-size:9.5px; color:var(--purple); background:var(--purple-dim); border:1px solid rgba(139,124,246,0.3); padding:3px 8px; border-radius:8px; font-weight:700;}
-.ai-block{background:var(--panel-2); border:1px solid var(--border); border-radius:11px; padding:11px 12px; margin-bottom:11px;}
-.ai-block-title{font-size:11.5px; font-weight:700; margin-bottom:6px;}
-.ai-block-text{font-size:12px; color:#c6cadb; line-height:1.55;}
-.ai-ask-btn{margin-top:9px; background:var(--purple-dim); color:var(--purple); border:1px solid rgba(139,124,246,0.35); font-size:11.5px; font-weight:600; padding:7px 12px; border-radius:8px; cursor:pointer;}
+.ai-badge{font-size:9px; color:var(--purple); background:var(--purple-dim); border:1px solid rgba(139,124,246,0.3); padding:2px 7px; border-radius:7px; font-weight:700;}
+.ai-block{background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:9px 10px; margin-bottom:8px;}
+.ai-block-title{font-size:10.5px; font-weight:700; margin-bottom:5px;}
+.ai-block-text{font-size:11px; color:#c6cadb; line-height:1.5;}
+.ai-ask-btn{margin-top:8px; background:var(--purple-dim); color:var(--purple); border:1px solid rgba(139,124,246,0.35); font-size:10.5px; font-weight:600; padding:6px 11px; border-radius:8px; cursor:pointer;}
 
 /* News with image */
-.news-row{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+.news-row{display:flex; gap:9px; padding:7px 0; border-bottom:1px solid var(--border);}
 .news-row:last-child{border-bottom:none;}
-.news-thumb{width:52px; height:52px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--panel-2);}
-.news-thumb-fallback{width:52px; height:52px; border-radius:8px; flex-shrink:0; background:linear-gradient(135deg,var(--blue-dim),var(--purple-dim)); display:flex; align-items:center; justify-content:center; font-size:16px;}
-.news-title2{font-size:12.5px; font-weight:600; line-height:1.35; color:var(--text);}
-.news-meta2{font-size:10.5px; color:var(--dimmer); margin-top:3px;}
+.news-thumb{width:42px; height:42px; border-radius:7px; object-fit:cover; flex-shrink:0; background:var(--panel-2);}
+.news-thumb-fallback{width:42px; height:42px; border-radius:7px; flex-shrink:0; background:linear-gradient(135deg,var(--blue-dim),var(--purple-dim)); display:flex; align-items:center; justify-content:center; font-size:14px;}
+.news-title2{font-size:11.5px; font-weight:600; line-height:1.3; color:var(--text);}
+.news-meta2{font-size:9.5px; color:var(--dimmer); margin-top:2px;}
 a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(--blue);}
 
 /* market tabs */
-.mtabs{display:flex; gap:4px; margin-bottom:12px;}
-.mtabs button{background:var(--panel-2); border:1px solid var(--border); color:var(--dim); font-size:11.5px; padding:6px 12px; border-radius:8px; cursor:pointer; font-family:'Inter';}
+.mtabs{display:flex; gap:4px; margin-bottom:10px;}
+.mtabs button{background:var(--panel-2); border:1px solid var(--border); color:var(--dim); font-size:10.5px; padding:5px 10px; border-radius:7px; cursor:pointer; font-family:'Inter';}
 .mtabs button.active{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600;}
 
 /* widget grid */
-.widget-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:14px;}
+.widget-row{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-top:9px;}
 @media (max-width:1180px){ .widget-row{grid-template-columns:repeat(2,1fr);} }
 @media (max-width:640px){ .widget-row{grid-template-columns:1fr;} }
 
@@ -241,29 +262,21 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
 
     <!-- ============ DASHBOARD ============ -->
     <div class="view active" id="view-dashboard">
-      <div class="top-grid">
-
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-head"><div class="card-title">🕐 World Clock</div></div>
-          <div id="worldClockList"></div>
-        </div>
-
-        <div></div>
-        <div></div>
+      <div id="onboardTip" style="display:flex; align-items:center; gap:12px; background:var(--blue-dim); border:1px solid rgba(79,140,246,0.3); border-radius:12px; padding:12px 16px; margin-bottom:14px; font-size:12.5px; color:#c6cadb;">
+        <span style="font-size:16px;">💡</span>
+        <span style="flex:1;">Click any <b>country</b>, <b>conflict</b>, or <b>alert</b> for full details. Drag the globe to rotate, scroll or use +/− to zoom.
+        <span class="live-tag" style="margin:0 4px;">live</span>data updates in real time; <span class="sample-tag">sample</span>data is placeholder until a paid feed is connected.</span>
+        <span style="cursor:pointer; color:var(--dim); font-size:16px;" onclick="document.getElementById('onboardTip').style.display='none'">✕</span>
       </div>
-
-      <div class="top-grid" style="margin-top:14px;">
+      <div class="top-grid">
         <div>
-          <div class="card" style="margin-bottom:14px;">
-            <div class="card-head"><div class="card-title">🔴 Live Alerts</div><div class="card-link" onclick="showView('alerts')">View All</div></div>
-            <div id="alertsPreview"></div>
+          <div class="card" style="margin-bottom:9px;">
+            <div class="card-head"><div class="card-title">🕐 World Clock</div></div>
+            <div id="worldClockList"></div>
           </div>
           <div class="card">
-            <div class="card-head"><div class="card-title">🟢 Global Status</div></div>
-            <div class="wstat-row"><span class="wstat-name">System Status</span><span class="wstat-val up">● All Systems Operational</span></div>
-            <div class="wstat-row"><span class="wstat-name">Data Feeds</span><span class="wstat-val" id="feedCount">— Active</span></div>
-            <div class="wstat-row"><span class="wstat-name">AI Models</span><span class="wstat-val up">Operational</span></div>
-            <div class="wstat-row"><span class="wstat-name">Update Frequency</span><span class="wstat-val">Real-time</span></div>
+            <div class="card-head"><div class="card-title">🔴 Live Alerts</div><div class="card-link" onclick="showView('alerts')">View All</div></div>
+            <div id="alertsPreview"></div>
           </div>
         </div>
 
@@ -271,8 +284,8 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
           <div class="card-head"><div class="card-title disp">🌐 Interactive Globe</div><span class="live-tag">live</span></div>
           <div class="globe-legend">
             <span><span class="gdot" style="background:var(--red)"></span>Conflicts</span>
-            <span><span class="gdot" style="background:var(--orange)"></span>Disasters (live)</span>
-            <span><span class="gdot" style="background:var(--blue)"></span>Night View</span>
+            <span><span class="gdot" style="background:var(--orange)"></span>Disasters</span>
+            <span><span class="gdot" style="background:var(--blue)"></span>Night</span>
             <span><span class="gdot" style="background:var(--dim)"></span>Borders</span>
           </div>
           <div class="globe-stage">
@@ -294,34 +307,44 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
             </div>
           </div>
           <div class="globe-stats" id="globeStats"></div>
+          <div class="card" style="margin-top:9px; background:var(--panel-2);">
+            <div class="card-head"><div class="card-title">Cryptocurrencies</div><span class="live-tag">live</span></div>
+            <div id="cryptoTable"><div class="wstat-row"><span class="wstat-name">Loading<span class="loading-dots"></span></span></div></div>
+          </div>
         </div>
 
-        <div class="card ai-card">
-          <div class="card-head"><div class="card-title">Today's Intelligence</div><div class="ai-badge">✨ AI POWERED</div></div>
-          <div class="ai-block"><div class="ai-block-title">Global Summary</div>
-            <div class="ai-block-text">Markets are mixed as investors weigh inflation prints against central-bank signaling. Geopolitical tension stays elevated across Eastern Europe and the Middle East.</div></div>
-          <div class="ai-block"><div class="ai-block-title">🤖 AI Brief</div>
-            <div class="ai-block-text">Oil prices are likely to stay volatile this week on OPEC+ supply decisions.</div>
-            <button class="ai-ask-btn" onclick="showView('ai')">Ask AI Assistant →</button></div>
+        <div>
+          <div class="card ai-card" style="margin-bottom:9px;">
+            <div class="card-head"><div class="card-title">Today's Intelligence</div><span class="sample-tag">example</span></div>
+            <div class="ai-block"><div class="ai-block-title">Global Summary</div>
+              <div class="ai-block-text">Markets are mixed as investors weigh inflation prints against central-bank signaling. Geopolitical tension stays elevated across Eastern Europe and the Middle East.</div></div>
+            <div class="ai-block"><div class="ai-block-title">🤖 AI Brief</div>
+              <div class="ai-block-text">Oil prices are likely to stay volatile this week on OPEC+ supply decisions.</div>
+              <div style="font-size:10.5px; color:var(--dimmer); margin-top:6px;">↑ Example text. For a real, live answer, use the button below.</div>
+              <button class="ai-ask-btn" onclick="showView('ai')">✨ Ask AI Assistant (live) →</button></div>
+          </div>
+          <div class="card" style="margin-bottom:9px;">
+            <div class="card-head"><div class="card-title">🟢 Global Status</div></div>
+            <div class="mini-grid">
+              <div class="mini-cell"><div class="n">System Status</div><div class="v up">● Operational</div></div>
+              <div class="mini-cell"><div class="n">Data Feeds</div><div class="v" id="feedCount">— Active</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Commodities</div><span class="sample-tag">sample</span></div>
+            <div id="commodWidget"></div>
+          </div>
         </div>
       </div>
 
-      <div class="widget-row">
+      <div class="widget-row" style="grid-template-columns:1.4fr 1fr;">
         <div class="card">
           <div class="card-head"><div class="card-title">Latest World News</div><span class="live-tag">live · GDELT</span></div>
           <div id="worldNews"><div class="wstat-row"><span class="wstat-name">Loading<span class="loading-dots"></span></span></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><div class="card-title">Cryptocurrencies</div><span class="live-tag">live</span></div>
-          <div id="cryptoTable"><div class="wstat-row"><span class="wstat-name">Loading<span class="loading-dots"></span></span></div></div>
-        </div>
-        <div class="card">
           <div class="card-head"><div class="card-title">Economic Calendar</div><span class="sample-tag">sample</span></div>
           <div id="econCalendar"></div>
-        </div>
-        <div class="card">
-          <div class="card-head"><div class="card-title">Commodities</div><span class="sample-tag">sample</span></div>
-          <div id="commodWidget"></div>
         </div>
       </div>
 
@@ -336,6 +359,7 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
               <div class="cf-kv"><span>Region</span><b id="cfRegion">—</b></div>
               <div class="cf-kv"><span>Currency</span><b id="cfCurrency">—</b></div>
             </div>
+            <div style="font-size:10.5px; color:var(--dimmer); margin-top:12px; margin-bottom:4px;">Switch focus country</div>
             <select class="cf-select" id="cfSelect"></select>
           </div>
           <div>
@@ -446,16 +470,24 @@ a.src{color:inherit; text-decoration:none;} a.src:hover .news-title2{color:var(-
 
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
-function loadScriptWithRetry(src, onload, onerror, retriesLeft){
+const GLOBE_GL_SOURCES = [
+  'https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/dist/globe.gl.min.js',
+  'https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js',
+  'https://unpkg.com/globe.gl',
+];
+function tryLoadGlobeGl(sourceIdx, retriesLeft){
+  if(sourceIdx >= GLOBE_GL_SOURCES.length){ window.dispatchEvent(new Event('globelibsfailed')); return; }
   const s = document.createElement('script');
-  s.src = src + (retriesLeft < 2 ? ('?retry=' + Date.now()) : '');
-  s.onload = onload;
-  s.onerror = ()=>{ if(retriesLeft > 0) setTimeout(()=>loadScriptWithRetry(src, onload, onerror, retriesLeft-1), 800); else onerror(); };
+  s.src = GLOBE_GL_SOURCES[sourceIdx] + (retriesLeft < 2 ? ('?retry=' + Date.now()) : '');
+  s.onload = ()=>{
+    if(typeof Globe !== 'undefined'){ window.dispatchEvent(new Event('globelibsready')); }
+    else if(retriesLeft > 0){ setTimeout(()=>tryLoadGlobeGl(sourceIdx, retriesLeft-1), 700); }
+    else{ tryLoadGlobeGl(sourceIdx+1, 2); }
+  };
+  s.onerror = ()=>{ if(retriesLeft > 0) setTimeout(()=>tryLoadGlobeGl(sourceIdx, retriesLeft-1), 700); else tryLoadGlobeGl(sourceIdx+1, 2); };
   document.head.appendChild(s);
 }
-function onLibLoaded(){ window.dispatchEvent(new Event('globelibsready')); }
-function onLibFailed(){ window.dispatchEvent(new Event('globelibsfailed')); }
-loadScriptWithRetry('https://unpkg.com/globe.gl', onLibLoaded, onLibFailed, 2);
+tryLoadGlobeGl(0, 2);
 </script>
 <script>
 /* ===================== DATA ===================== */
@@ -477,7 +509,7 @@ document.getElementById('alertsFull').innerHTML = ALERTS.map(alertRow).join('');
 
 const INDICES = [['S&P 500','4,267.52','+1.18%',true],['NASDAQ','13,215.24','+1.35%',true],['DOW JONES','33,002.38','+0.72%',true],['FTSE 100','7,628.91','-0.28%',false],['NIKKEI 225','28,946.14','+0.91%',true]];
 const BONDS = [['US 10Y Yield','4.28%','+0.03',true],['US 2Y Yield','4.65%','-0.02',false],['German 10Y','2.41%','+0.01',true],['UK 10Y Gilt','4.02%','+0.02',true],['Japan 10Y','0.98%','—',null]];
-function rowsHTML(arr){ return arr.map(([n,v,c,up])=> `<div class="wstat-row"><span class="wstat-name">${n}</span><span class="wstat-val">${v} ${up===null?'<span style="color:var(--dimmer)">—</span>':`<span class="${up?'up':'down'}">${up?'▲':'▼'}${String(c).replace(/[+-]/,'')}</span>`}</span></div>`).join(''); }
+function rowsHTML(arr){ return `<div class="mini-grid">` + arr.map(([n,v,c,up])=> `<div class="mini-cell"><div class="n">${n}</div><div class="v">${v} ${up===null?'<span style="color:var(--dimmer)">—</span>':`<span class="${up?'up':'down'}" style="font-size:10px;">${up?'▲':'▼'}${String(c).replace(/[+-]/,'')}</span>`}</div></div>`).join('') + `</div>`; }
 document.getElementById('mt-indices').innerHTML = rowsHTML(INDICES);
 document.getElementById('mt-bonds').innerHTML = rowsHTML(BONDS);
 
@@ -501,7 +533,7 @@ document.getElementById('currencySelect').onchange = (e)=>{
 
 const COMMOD = [['Gold',2344.10,'+0.85%',true],['Silver',29.41,'+1.20%',true],['Oil (Brent)',82.19,'+2.31%',true],['Natural Gas',2.78,'-0.65%',false],['Copper',4.27,'+0.18%',true]];
 function renderCommod(){
-  const html = COMMOD.map(([n,v,c,up])=> `<div class="wstat-row"><span class="wstat-name">${n}</span><span class="wstat-val">${fmtCcy(v)} <span class="${up?'up':'down'}">${up?'▲':'▼'}${String(c).replace(/[+-]/,'')}</span></span></div>`).join('');
+  const html = `<div class="mini-grid">` + COMMOD.map(([n,v,c,up])=> `<div class="mini-cell"><div class="n">${n}</div><div class="v">${fmtCcy(v)} <span class="${up?'up':'down'}" style="font-size:10px;">${up?'▲':'▼'}${String(c).replace(/[+-]/,'')}</span></div></div>`).join('') + `</div>`;
   document.getElementById('commodWidget').innerHTML = html;
   document.getElementById('mt-commodities').innerHTML = html;
 }
@@ -552,9 +584,9 @@ async function openConflict(idx){
   loadCountryNews(c.name, 'conflictNews');
 }
 
-document.getElementById('econCalendar').innerHTML = [
+document.getElementById('econCalendar').innerHTML = `<div class="mini-grid">` + [
  ['🇺🇸 USD','Fed Chair Speaks','16:00'],['🇪🇺 EUR','EU Economic Forecast','17:00'],['🇬🇧 GBP','UK Inflation Report','18:30'],['🇯🇵 JPY','BoJ Policy Statement','22:00']
-].map(([f,e,t])=> `<div class="wstat-row"><span class="wstat-name">${f} ${e}</span><span class="wstat-val" style="font-size:11px;">${t}</span></div>`).join('');
+].map(([f,e,t])=> `<div class="mini-cell"><div class="n">${f} ${t}</div><div class="v" style="font-size:10.5px; font-weight:500;">${e}</div></div>`).join('') + `</div>`;
 
 /* ===================== World clock (live) ===================== */
 const CLOCK_ZONES = [
@@ -563,10 +595,10 @@ const CLOCK_ZONES = [
 ];
 function renderClocks(){
   const now = new Date();
-  document.getElementById('worldClockList').innerHTML = CLOCK_ZONES.map(([label,tz,flag])=>{
+  document.getElementById('worldClockList').innerHTML = `<div class="mini-grid">` + CLOCK_ZONES.map(([label,tz,flag])=>{
     const t = new Intl.DateTimeFormat('en-US',{timeZone:tz, hour:'2-digit', minute:'2-digit', hour12:false}).format(now);
-    return `<div class="world-clock-row"><span class="wc-city">${flag} ${label}</span><span class="wc-time">${t}</span></div>`;
-  }).join('');
+    return `<div class="mini-cell"><div class="n">${flag} ${label}</div><div class="v">${t}</div></div>`;
+  }).join('') + `</div>`;
   document.getElementById('topClock').textContent = new Intl.DateTimeFormat('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
   document.getElementById('topDate').textContent = new Intl.DateTimeFormat('en-US',{weekday:'short', month:'short', day:'numeric'}).format(now);
 }
@@ -712,39 +744,35 @@ async function submitGlobalAsk(){
 }
 
 /* ===================== GDELT news ===================== */
+function newsRowsHTML(articles){
+  return articles.map(a=>{
+    const date = a.seendate ? `${a.seendate.slice(0,4)}-${a.seendate.slice(4,6)}-${a.seendate.slice(6,8)}` : '';
+    return `<a class="src" href="${a.url}" target="_blank"><div class="news-row">
+      ${a.socialimage ? `<img class="news-thumb" src="${a.socialimage}" onerror="this.style.display='none'">` : `<div class="news-thumb-fallback">📰</div>`}
+      <div><div class="news-title2">${a.title || 'Untitled'}</div><div class="news-meta2">${a.domain||''} ${date?'· '+date:''}</div></div>
+    </div></a>`;
+  }).join('');
+}
 async function loadCountryNews(name, elId){
   const box = document.getElementById(elId);
   try{
     const q = encodeURIComponent(`"${name}" sourcelang:english`);
-    const res = await fetch(`https://api.gdeltproject.org/api/v2/doc/doc?query=${q}&mode=artlist&maxrecords=6&format=json&sort=hybridrel`);
-    const data = await res.json();
+    const data = await fetchJsonWithRetry(`https://api.gdeltproject.org/api/v2/doc/doc?query=${q}&mode=artlist&maxrecords=6&format=json&sort=hybridrel`, 2, 1200);
     const articles = (data.articles || []).slice(0,6);
-    if(!articles.length){ box.innerHTML = '<div class="wstat-row"><span class="wstat-name">No recent live headlines found.</span></div>'; return; }
-    box.innerHTML = articles.map(a=>{
-      const date = a.seendate ? `${a.seendate.slice(0,4)}-${a.seendate.slice(4,6)}-${a.seendate.slice(6,8)}` : '';
-      return `<a class="src" href="${a.url}" target="_blank"><div class="news-row">
-        ${a.socialimage ? `<img class="news-thumb" src="${a.socialimage}" onerror="this.style.display='none'">` : `<div class="news-thumb-fallback">📰</div>`}
-        <div><div class="news-title2">${a.title || 'Untitled'}</div><div class="news-meta2">${a.domain||''} ${date?'· '+date:''}</div></div>
-      </div></a>`;
-    }).join('');
-  }catch(e){ box.innerHTML = '<div class="wstat-row"><span class="wstat-name">Live news feed unavailable right now.</span></div>'; }
+    box.innerHTML = articles.length ? newsRowsHTML(articles) : '<div class="wstat-row"><span class="wstat-name">No recent live headlines found.</span></div>';
+  }catch(e){
+    box.innerHTML = `<div class="wstat-row"><span class="wstat-name">Live news unavailable right now. <span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="loadCountryNews('${name.replace(/'/g,"\\'")}','${elId}')">Retry</span></span></div>`;
+  }
 }
 async function loadWorldNews(){
   try{
-    const res = await fetch(`https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:english&mode=artlist&maxrecords=6&format=json&sort=hybridrel`);
-    const data = await res.json();
+    const data = await fetchJsonWithRetry(`https://api.gdeltproject.org/api/v2/doc/doc?query=(world%20OR%20global%20OR%20international)%20sourcelang:english&mode=artlist&maxrecords=6&format=json&sort=hybridrel`, 2, 1200);
     const articles = (data.articles || []).slice(0,6);
-    const html = articles.map(a=>{
-      const date = a.seendate ? `${a.seendate.slice(0,4)}-${a.seendate.slice(4,6)}-${a.seendate.slice(6,8)}` : '';
-      return `<a class="src" href="${a.url}" target="_blank"><div class="news-row">
-        ${a.socialimage ? `<img class="news-thumb" src="${a.socialimage}" onerror="this.style.display='none'">` : `<div class="news-thumb-fallback">📰</div>`}
-        <div><div class="news-title2">${a.title || 'Untitled'}</div><div class="news-meta2">${a.domain||''} ${date?'· '+date:''}</div></div>
-      </div></a>`;
-    }).join('');
-    document.getElementById('worldNews').innerHTML = html || '<div class="wstat-row"><span class="wstat-name">No headlines found.</span></div>';
-    document.getElementById('worldNews2').innerHTML = html || '<div class="wstat-row"><span class="wstat-name">No headlines found.</span></div>';
+    const html = articles.length ? newsRowsHTML(articles) : '<div class="wstat-row"><span class="wstat-name">No headlines found.</span></div>';
+    document.getElementById('worldNews').innerHTML = html;
+    document.getElementById('worldNews2').innerHTML = html;
   }catch(e){
-    const msg = '<div class="wstat-row"><span class="wstat-name">Live news feed unavailable right now.</span></div>';
+    const msg = '<div class="wstat-row"><span class="wstat-name">Live news unavailable right now. <span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="loadWorldNews()">Retry</span></span></div>';
     document.getElementById('worldNews').innerHTML = msg; document.getElementById('worldNews2').innerHTML = msg;
   }
 }
@@ -777,8 +805,8 @@ async function loadFxAll(){
   try{
     const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,INR,CNY');
     const d = await res.json();
-    document.getElementById('mt-forex').innerHTML = Object.entries(d.rates).map(([cur,val])=>
-      `<div class="wstat-row"><span class="wstat-name">USD/${cur}</span><span class="wstat-val">${val.toFixed(cur==='JPY'||cur==='INR'?2:4)}</span></div>`).join('');
+    document.getElementById('mt-forex').innerHTML = `<div class="mini-grid">` + Object.entries(d.rates).map(([cur,val])=>
+      `<div class="mini-cell"><div class="n">USD/${cur}</div><div class="v">${val.toFixed(cur==='JPY'||cur==='INR'?2:4)}</div></div>`).join('') + `</div>`;
   }catch(e){ document.getElementById('mt-forex').innerHTML = '<div class="wstat-row"><span class="wstat-name">Live FX feed unavailable.</span></div>'; }
 }
 
@@ -790,10 +818,10 @@ async function loadEconLive(){
       fetchWBIndicator('US','FP.CPI.TOTL.ZG'), fetchWBIndicator('US','NY.GDP.MKTP.KD.ZG'),
     ]);
     const rows = [['Global Inflation',wInf],['Global GDP Growth',wGdp],['Global Unemployment',wUnemp],['US Inflation',usInf],['US GDP Growth',usGdp]];
-    const html = rows.map(([label,d])=> d
-      ? `<div class="wstat-row"><span class="wstat-name">${label}</span><span class="wstat-val">${d.value.toFixed(1)}% <span style="font-size:10px; color:var(--dimmer);">(${d.year})</span></span></div>`
-      : `<div class="wstat-row"><span class="wstat-name">${label}</span><span class="wstat-val" style="color:var(--dimmer)">n/a</span></div>`
-    ).join('');
+    const html = `<div class="mini-grid">` + rows.map(([label,d])=> d
+      ? `<div class="mini-cell"><div class="n">${label}</div><div class="v">${d.value.toFixed(1)}% <span style="font-size:9px; color:var(--dimmer);">(${d.year})</span></div></div>`
+      : `<div class="mini-cell"><div class="n">${label}</div><div class="v" style="color:var(--dimmer)">n/a</div></div>`
+    ).join('') + `</div>`;
     document.getElementById('econWidget2').innerHTML = html;
     return {gdp: wGdp};
   }catch(e){
@@ -941,6 +969,18 @@ function initGlobe(){
     return;
   }
   let ALL_STATS = {}; let hoverFeat = null; let nightMode = false; let bordersMode = false; let disastersMode = false; let statsLoaded = false;
+  const pendingFetches = new Set();
+  function fetchCountryOnDemand(id){
+    if(ALL_STATS[id] || pendingFetches.has(id)) return;
+    pendingFetches.add(id);
+    fetchJsonWithRetry(`https://restcountries.com/v3.1/alpha/${id}?fields=name,capital,population,region,flag`, 1, 1000)
+      .then(d=>{
+        const data = Array.isArray(d) ? d[0] : d;
+        if(data) ALL_STATS[id] = { name: data.name?.common||'', capital: data.capital?data.capital[0]:'', population: data.population, region: data.region||'', flag: data.flag||'' };
+      })
+      .catch(()=>{})
+      .finally(()=> pendingFetches.delete(id));
+  }
 
   const capColor = (layer) => (feat)=>{
     const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name);
@@ -961,11 +1001,12 @@ function initGlobe(){
     .polygonLabel(feat=>{
       const s = ALL_STATS[feat.id]; const name = ID_TO_NAME[feat.id]; const c = name && COUNTRIES.find(x=>x.name===name);
       if(!s){
+        fetchCountryOnDemand(feat.id);
         if(c) return `<div style="background:#111626; border:1px solid rgba(255,255,255,.15); padding:9px 12px; border-radius:10px; font-family:Inter,sans-serif; min-width:130px;">
           <div style="font-size:13px; font-weight:700; color:#e9ebf3;">${c.name}</div>
           <div style="margin-top:5px; font-size:10px; font-weight:700; letter-spacing:.03em; color:${RISK_HEX[c.risk]};">● ${RISK_LABEL[c.risk].toUpperCase()}</div>
-          <div style="font-size:10px; color:#565d75; margin-top:4px;">(full details unavailable right now)</div></div>`;
-        return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#8991ab;">${statsLoaded ? 'Data not available' : 'Loading country details…'}</div>`;
+          <div style="font-size:10px; color:#565d75; margin-top:4px;">(loading full details…)</div></div>`;
+        return `<div style="background:#111626;border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;color:#8991ab;">Loading country details…</div>`;
       }
       const riskBadge = c ? `<div style="margin-top:5px; font-size:10px; font-weight:700; letter-spacing:.03em; color:${RISK_HEX[c.risk]};">● ${RISK_LABEL[c.risk].toUpperCase()}</div>` : '';
       return `<div style="background:#111626; border:1px solid rgba(255,255,255,.15); padding:9px 12px; border-radius:10px; font-family:Inter,sans-serif; min-width:150px;">
@@ -987,7 +1028,7 @@ function initGlobe(){
     .labelsData(CONFLICT_ZONES)
     .labelLat('lat').labelLng('lng').labelText('label')
     .labelSize(1.1).labelColor(()=>'#f0454f').labelDotRadius(0.5).labelResolution(2).labelAltitude(0.015)
-    .width(440).height(440);
+    .width(230).height(230);
 
   world.controls().autoRotate = true; world.controls().autoRotateSpeed = 0.12;
   world.pointOfView({lat:22, lng:25, altitude:2.2});
